@@ -175,7 +175,7 @@ export default function App() {
       }
     } catch (err: any) {
       console.error(err);
-      setErrorMessage(err.message || "An error occurred. Make sure your GEMINI_API_KEY is configured.");
+      setErrorMessage(err.message || "An error occurred. Verify AWS credentials and Bedrock model access.");
       setOcrLogLines(prev => [...prev, `[Critical Error] Single scanner page failed: ${err.message}`]);
     } finally {
       setIsAnalyzing(false);
@@ -504,7 +504,7 @@ export default function App() {
               <span className="block text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Engine Status</span>
               <span className="text-xs font-semibold text-emerald-400 flex items-center justify-end gap-1 mt-0.5">
                 <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]"></span>
-                Gemini Multi-Modal
+                Bedrock Multi-Modal
               </span>
             </div>
           </div>
@@ -626,7 +626,7 @@ export default function App() {
               {uploadTab === "bulk" && (
                 <div className="space-y-4">
                   <p className="text-xs text-neutral-400 leading-relaxed">
-                    Load multiple pages concurrently. Our system scans them sequentially via Gemini to map them seamlessly into one unified Intrack sheet.
+                    Load multiple pages concurrently. Our system scans them sequentially via Amazon Bedrock to map them seamlessly into one unified Intrack sheet.
                   </p>
 
                   <div 
@@ -763,7 +763,7 @@ export default function App() {
                 <p className="font-bold text-rose-350">OCR Analysis Faulted</p>
                 <p className="mt-1 text-rose-200/80 leading-relaxed">{errorMessage}</p>
                 <div className="mt-3 text-[10px] text-rose-300 bg-rose-500/10 inline-block px-2 py-0.5 rounded border border-rose-500/20 font-semibold font-mono">
-                  Settings &gt; Secrets &gt; GEMINI_API_KEY
+                  Configure AWS credentials and Bedrock model access (see README)
                 </div>
               </div>
             </div>
@@ -1020,7 +1020,7 @@ export default function App() {
           <p className="flex items-center justify-center gap-2 text-neutral-600">
             <span>Server Proxy: Port 3000</span>
             <span className="text-white/5">|</span>
-            <span>Gemini structured outputs OCR layer v3.5</span>
+            <span>Amazon Bedrock structured outputs OCR</span>
           </p>
         </div>
       </footer>

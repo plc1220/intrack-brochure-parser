@@ -1,6 +1,5 @@
 {
   "name": "Intrack Brochure Parser",
-  "description": "OCR and structured data extraction tool to match uploaded brochures to Intrack columns.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "description": "OCR and structured data extraction tool to match uploaded brochures to Intrack columns using Amazon Bedrock.",
+  "requestFramePermissions": []
 }
