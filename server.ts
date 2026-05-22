@@ -15,7 +15,7 @@ const PORT = Number(process.env.PORT) || 3000;
 
 const AWS_REGION = process.env.AWS_REGION || "ap-southeast-1";
 const BEDROCK_MODEL_ID =
-  process.env.BEDROCK_MODEL_ID || "amazon.nova-lite-v1:0";
+  process.env.BEDROCK_MODEL_ID || "apac.amazon.nova-lite-v1:0";
 
 const bedrockClient = new BedrockRuntimeClient({ region: AWS_REGION });
 

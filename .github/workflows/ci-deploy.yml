@@ -24,7 +24,7 @@ env:
   ECS_EXECUTION_ROLE_ARN: ${{ vars.ECS_EXECUTION_ROLE_ARN }}
   ECS_INFRASTRUCTURE_ROLE_ARN: ${{ vars.ECS_INFRASTRUCTURE_ROLE_ARN }}
   ECS_TASK_ROLE_ARN: ${{ vars.ECS_TASK_ROLE_ARN }}
-  BEDROCK_MODEL_ID: ${{ vars.BEDROCK_MODEL_ID || 'amazon.nova-lite-v1:0' }}
+  BEDROCK_MODEL_ID: ${{ vars.BEDROCK_MODEL_ID || 'apac.amazon.nova-lite-v1:0' }}
 
 jobs:
   ci:

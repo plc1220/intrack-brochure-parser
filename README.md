@@ -5,7 +5,7 @@ OCR and structured data extraction for retail flyers, using **Amazon Bedrock** (
 ## Prerequisites
 
 - Node.js 18+
-- AWS account with [Bedrock model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) enabled for your chosen model (default: `amazon.nova-lite-v1:0`)
+- AWS account with [Bedrock model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) enabled for your chosen model (default: `apac.amazon.nova-lite-v1:0`)
 - AWS credentials configured locally (`aws configure`, `AWS_PROFILE`, or environment variables)
 
 ## Run locally
@@ -25,7 +25,7 @@ OCR and structured data extraction for retail flyers, using **Amazon Bedrock** (
    | Variable | Description |
    |----------|-------------|
    | `AWS_REGION` | Bedrock region (default `ap-southeast-1`) |
-   | `BEDROCK_MODEL_ID` | Model ID, e.g. `amazon.nova-lite-v1:0`, `amazon.nova-pro-v1:0`, or a Claude vision model |
+   | `BEDROCK_MODEL_ID` | Bedrock model or inference profile ID, e.g. `apac.amazon.nova-lite-v1:0` |
 
 3. Start the app:
 
@@ -82,7 +82,7 @@ Configure the **`production`** environment:
 | Variable | `ECS_EXECUTION_ROLE_ARN` | `arn:aws:iam::123456789012:role/ecsTaskExecutionRole` |
 | Variable | `ECS_INFRASTRUCTURE_ROLE_ARN` | `arn:aws:iam::123456789012:role/ecsInfrastructureRoleForExpressServices` |
 | Variable | `ECS_TASK_ROLE_ARN` | `arn:aws:iam::123456789012:role/ecsIntrackBrochureParserTaskRole` |
-| Variable | `BEDROCK_MODEL_ID` | `amazon.nova-lite-v1:0` (optional) |
+| Variable | `BEDROCK_MODEL_ID` | `apac.amazon.nova-lite-v1:0` (optional) |
 
 Until those secrets exist, CI still runs; the deploy job will fail at the AWS step—add secrets when you are ready to ship.
 
