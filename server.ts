@@ -54,9 +54,31 @@ function mimeToImageFormat(
 
 function parseJsonResponse(text: string) {
   const trimmed = text.trim();
-  const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
-  const jsonText = fenced ? fenced[1] : trimmed;
-  return JSON.parse(jsonText);
+  const unfenced = trimmed
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+
+  try {
+    return JSON.parse(unfenced);
+  } catch {
+    const objectStart = unfenced.indexOf("{");
+    const arrayStart = unfenced.indexOf("[");
+    const starts = [objectStart, arrayStart].filter((index) => index >= 0);
+    const start = starts.length ? Math.min(...starts) : -1;
+
+    if (start < 0) {
+      throw new Error("Bedrock response did not contain JSON.");
+    }
+
+    const endChar = unfenced[start] === "{" ? "}" : "]";
+    const end = unfenced.lastIndexOf(endChar);
+    if (end <= start) {
+      throw new Error("Bedrock response contained incomplete JSON.");
+    }
+
+    return JSON.parse(unfenced.slice(start, end + 1));
+  }
 }
 
 // API Endpoint for OCR analysis
