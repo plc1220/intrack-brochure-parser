@@ -11,7 +11,7 @@ import { INSTRACK_EXTRACTION_SCHEMA } from "./intrack-extraction-schema";
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 const AWS_REGION = process.env.AWS_REGION || "us-east-1";
 const BEDROCK_MODEL_ID =
