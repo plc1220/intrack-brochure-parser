@@ -36,7 +36,11 @@ Instructions:
 4. For brand types, if own brand (like Topvalu, BIG Value, Living Choice for AEON BiG), assign "Housebrand".
 5. For department, look at what type of product it is and map to 'Chilled & Frozen', 'Electrical', 'Fresh', 'Grocery', 'Health & Beauty', 'Household'.
 6. Keep dates in YYYY-MM-DD format. The promotion shown is typically around April - May 2026.
-7. Be thorough and capture ALL distinct promo items displayed.`;
+7. Be thorough and capture ALL distinct promo items displayed.
+8. Return only valid JSON. Do not wrap it in markdown or add commentary.
+
+JSON schema:
+${JSON.stringify(INSTRACK_EXTRACTION_SCHEMA)}`;
 
 function mimeToImageFormat(
   mimeType: string
@@ -46,6 +50,13 @@ function mimeToImageFormat(
   if (normalized.includes("webp")) return "webp";
   if (normalized.includes("gif")) return "gif";
   return "jpeg";
+}
+
+function parseJsonResponse(text: string) {
+  const trimmed = text.trim();
+  const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+  const jsonText = fenced ? fenced[1] : trimmed;
+  return JSON.parse(jsonText);
 }
 
 // API Endpoint for OCR analysis
@@ -81,19 +92,6 @@ app.post("/api/analyze", async (req, res) => {
           maxTokens: 8192,
           temperature: 0.1,
         },
-        outputConfig: {
-          textFormat: {
-            type: "json_schema",
-            structure: {
-              jsonSchema: {
-                schema: JSON.stringify(INSTRACK_EXTRACTION_SCHEMA),
-                name: "intrack_brochure_extraction",
-                description:
-                  "Structured extraction of promotional brochure data for Intrack",
-              },
-            },
-          },
-        },
       })
     );
 
@@ -102,7 +100,7 @@ app.post("/api/analyze", async (req, res) => {
       throw new Error("No response received from Amazon Bedrock.");
     }
 
-    const parsedData = JSON.parse(text);
+    const parsedData = parseJsonResponse(text);
     return res.json({
       success: true,
       data: parsedData,
