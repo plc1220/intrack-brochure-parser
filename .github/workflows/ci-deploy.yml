@@ -90,6 +90,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push image
+        id: build-image
         env:
           ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
@@ -97,14 +98,14 @@ jobs:
           IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
           docker build -t "${IMAGE_URI}" .
           docker push "${IMAGE_URI}"
-          echo "IMAGE_URI=${IMAGE_URI}" >> "${GITHUB_ENV}"
+          echo "image-uri=${IMAGE_URI}" >> "${GITHUB_OUTPUT}"
 
       - name: Deploy to ECS Express Mode
         id: deploy
         uses: aws-actions/amazon-ecs-deploy-express-service@v1
         with:
           service-name: ${{ env.ECS_SERVICE }}
-          image: ${{ env.IMAGE_URI }}
+          image: ${{ steps.build-image.outputs.image-uri }}
           execution-role-arn: ${{ env.ECS_EXECUTION_ROLE_ARN }}
           infrastructure-role-arn: ${{ env.ECS_INFRASTRUCTURE_ROLE_ARN }}
           task-role-arn: ${{ env.ECS_TASK_ROLE_ARN }}
@@ -121,4 +122,5 @@ jobs:
             ]
 
       - name: Show service endpoint
-        run: echo "Deployed endpoint: ${{ steps.deploy.outputs.endpoint }}"
+        run: |
+          echo "Deployed endpoint: ${{ steps.deploy.outputs.endpoint }}"
