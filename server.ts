@@ -13,7 +13,7 @@ dotenv.config();
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
-const AWS_REGION = process.env.AWS_REGION || "us-east-1";
+const AWS_REGION = process.env.AWS_REGION || "ap-southeast-1";
 const BEDROCK_MODEL_ID =
   process.env.BEDROCK_MODEL_ID || "amazon.nova-lite-v1:0";
 
@@ -22,6 +22,10 @@ const bedrockClient = new BedrockRuntimeClient({ region: AWS_REGION });
 // Increase payload limit to handle large uploaded images in base64
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 const EXTRACTION_PROMPT = `Analyze this shopping flyer/brochure page and extract every promotional product item and matching campaign details into the Intrack column format specified in the JSON schema.
 
