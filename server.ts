@@ -6,6 +6,7 @@ import {
   ConverseCommand,
 } from "@aws-sdk/client-bedrock-runtime";
 import dotenv from "dotenv";
+import { jsonrepair } from "jsonrepair";
 import { INSTRACK_EXTRACTION_SCHEMA } from "./intrack-extraction-schema";
 
 dotenv.config();
@@ -59,9 +60,21 @@ function parseJsonResponse(text: string) {
     .replace(/\s*```$/i, "")
     .trim();
 
+  const parse = (jsonText: string) => {
+    try {
+      return JSON.parse(jsonText);
+    } catch (error) {
+      return JSON.parse(jsonrepair(jsonText));
+    }
+  };
+
   try {
-    return JSON.parse(unfenced);
-  } catch {
+    if (!unfenced.startsWith("{") && !unfenced.startsWith("[")) {
+      throw new Error("Bedrock response had text before JSON.");
+    }
+
+    return parse(unfenced);
+  } catch (initialError) {
     const objectStart = unfenced.indexOf("{");
     const arrayStart = unfenced.indexOf("[");
     const starts = [objectStart, arrayStart].filter((index) => index >= 0);
@@ -77,7 +90,32 @@ function parseJsonResponse(text: string) {
       throw new Error("Bedrock response contained incomplete JSON.");
     }
 
-    return JSON.parse(unfenced.slice(start, end + 1));
+    const jsonText = unfenced.slice(start, end + 1);
+    try {
+      return parse(jsonText);
+    } catch (repairError) {
+      const message =
+        repairError instanceof Error ? repairError.message : String(repairError);
+      const positionMatch = message.match(/position (\d+)/i);
+      const position = positionMatch ? Number(positionMatch[1]) : -1;
+      const context =
+        position >= 0
+          ? jsonText.slice(Math.max(0, position - 160), position + 160)
+          : jsonText.slice(0, 320);
+
+      console.error("Unable to parse Bedrock JSON response:", {
+        initialError:
+          initialError instanceof Error
+            ? initialError.message
+            : String(initialError),
+        repairError: message,
+        context,
+      });
+
+      throw new Error(
+        `Bedrock returned malformed JSON that could not be repaired: ${message}`
+      );
+    }
   }
 }
 
